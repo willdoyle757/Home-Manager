@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:home_manager/models/household.dart';
 import 'package:home_manager/models/resident.dart';
 import 'package:provider/provider.dart';
 
@@ -27,6 +28,7 @@ class _home_new_houseState extends State<home_new_house> {
     final user = Provider.of<User?>(context);
     final DatabaseService database = DatabaseService(user!.uid);
     final residents = database.residentListFromSnapshot(residentsSnap);
+    final houses = Provider.of<List<household>>(context);
 
     residents.forEach((resident) {
       if (resident.ID == user.uid){
@@ -69,7 +71,13 @@ class _home_new_houseState extends State<home_new_house> {
             onPressed: () async {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (context) => joinHouse()
+                  builder: (context) => Provider(
+                    create: (context) => houses,
+                    builder: (context, child) => Provider(
+                        create: (context) => name,
+                        builder: (context, child) =>joinHouse()
+                    )
+                  )
                 )
               );
             },
@@ -152,8 +160,20 @@ class joinHouse extends StatefulWidget {
 }
 
 class _joinHouseState extends State<joinHouse> {
+
+  String houseName = '';
+  String code = '';
+  household tempHouse = household('', '');
+  household house = household('', '');
+
   @override
   Widget build(BuildContext context) {
+
+    final houses = Provider.of<List<household>>(context);
+    final user = Provider.of<User?>(context);
+    final name = Provider.of<String>(context);
+    final DatabaseService database = DatabaseService(user!.uid);
+
     return Scaffold(
         backgroundColor: Colors.grey.shade400,
         appBar: AppBar(
@@ -164,27 +184,48 @@ class _joinHouseState extends State<joinHouse> {
             padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
             child:
             Form(
-                child: Column(
-                  mainAxisSize : MainAxisSize.min,
-                  children: <Widget>[
-                    SizedBox(height: 20.0,),
-                    //resource
-                    TextFormField(
-                      decoration: InputDecoration(hintText: 'House Name'),
-                      onChanged: (val) {
+              child: Column(
+                mainAxisSize : MainAxisSize.min,
+                children: <Widget>[
+                  SizedBox(height: 20.0,),
+                  //resource
+                  TextFormField(
+                    decoration: InputDecoration(hintText: 'House'),
+                    onChanged: (val) {
+                      houseName = val;
 
+                      houses.forEach((h) {
+                        if (h.name == houseName){
+                          tempHouse = h;
+                        }
+                      });
+
+                    },
+                  ),
+                  SizedBox(height: 20.0,),
+                  //resource
+                  TextFormField(
+                    decoration: InputDecoration(hintText: 'Code'),
+                    onChanged: (val) {
+                      code = val;
+                    },
+                  ),
+                  SizedBox(height: 20.0,),
+                  //end
+                  ElevatedButton(
+                      onPressed: () async {
+                        if (tempHouse.code == code){
+                          house = tempHouse;
+                          database.updateUserData(name , true, house.name);
+                          database.updateHouseUserData(house.name, name);
+                        }
+
+                        Navigator.pop(context);
                       },
-                    ),
-                    SizedBox(height: 20.0,),
-                    //end
-                    ElevatedButton(
-                        onPressed: () async {
-
-                        },
-                        child: Text('Join')
-                    ),
-                  ],
-                )
+                      child: Text('Join')
+                  ),
+                ],
+              )
             )
         )
     );

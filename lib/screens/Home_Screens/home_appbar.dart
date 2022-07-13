@@ -46,9 +46,12 @@ class _Home_AppbarState extends State<Home_Appbar> {
 
     return
       StreamProvider.value(
-        value: database.reservation,
+        value: database.housemates,
         initialData: null,
-        child: Scaffold(
+        child: StreamProvider.value(
+          value: database.reservation,
+          initialData: null,
+          child: Scaffold(
       backgroundColor: Colors.grey.shade400,
       appBar: AppBar(
         backgroundColor: Colors.blueAccent,
@@ -86,6 +89,7 @@ class _Home_AppbarState extends State<Home_Appbar> {
         child: const Icon(Icons.add),
       ) : null
         )
+      )
     );
   }
 

@@ -27,8 +27,11 @@ class _HomePageState extends State<HomePage> {
     return StreamProvider.value(
       value: DatabaseService(user!.uid).residents,
       initialData: null,
-      child: Home_Appbar()
-
+      child:StreamProvider.value(
+        value: DatabaseService(user.uid).houses,
+        initialData: null,
+        child: Home_Appbar()
+      )
     );
   }
 }

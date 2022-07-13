@@ -27,6 +27,7 @@ class _home_dashState extends State<home_dash> {
     final user = Provider.of<User?>(context);
     final DatabaseService database = DatabaseService(user!.uid);
     final residents = database.residentListFromSnapshot(residentsSnap);
+    final housemates = Provider.of<List<Resident>>(context);
     final reservations = Provider.of<List<Reservation>?>(context);
 
 
@@ -59,7 +60,20 @@ class _home_dashState extends State<home_dash> {
             ),
           ),
           //reservation list
-          resList(reservations, curr_res.name)
+          reservationList(reservations, curr_res.name),
+
+          SizedBox(height: 30.0,),
+
+          Center(
+            child: Text('House Mates',
+              style: TextStyle(
+                fontSize: 25,
+                color: Colors.black,
+              ),
+            ),
+          ),
+
+          houseResidentsList(housemates)
         ]
       )
 
@@ -68,15 +82,16 @@ class _home_dashState extends State<home_dash> {
 
   Widget noRes(){
     return Container(
-      child: Column(
+      child:
+      Column(
         children: <Widget>[
-        SizedBox(height: 30.0,),
+          SizedBox(height: 30.0,),
       //title
-      Center(
-        child: Text('Reservations',
-          style: TextStyle(
-            fontSize: 25,
-            color: Colors.black,
+          Center(
+            child: Text('Reservations',
+              style: TextStyle(
+                fontSize: 25,
+                color: Colors.black,
               ),
             ),
           ),
@@ -94,7 +109,7 @@ class _home_dashState extends State<home_dash> {
     );
   }
 
-  Widget resList(List reservations, String curr_res_name){
+  Widget reservationList(List reservations, String curr_res_name){
 
     return ListView.builder(
       scrollDirection: Axis.vertical,
@@ -112,6 +127,17 @@ class _home_dashState extends State<home_dash> {
     );
   }
 
-
-
+  Widget houseResidentsList(List houseResidents){
+    return ListView.builder(scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      itemCount: houseResidents.length,
+      padding: const EdgeInsets.all(20),
+      itemBuilder: (BuildContext context, index) {
+        return Card (child: ListTile(
+          title: Text(' ${houseResidents[index].name}'),
+          )
+        );
+      },
+    );
+  }
 }
