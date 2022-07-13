@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "330546570786",
+    "project_id": "home-manager-5ebc8",
+    "storage_bucket": "home-manager-5ebc8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:330546570786:android:9917069a1489ee767a4c7b",
+        "android_client_info": {
+          "package_name": "io.williamsburg_electric.home_manager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "330546570786-2600gd686hjkdn0hu4tubot2m0skk3sd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkj0D15CNtL1VbB6_t47O5SSy7_WIfXPc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "330546570786-2600gd686hjkdn0hu4tubot2m0skk3sd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
