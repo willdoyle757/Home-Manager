@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:home_manager/models/household.dart';
 import 'package:home_manager/models/reservation.dart';
 import 'package:home_manager/screens/Home_Screens/home_dashboard.dart';
 import 'package:home_manager/screens/Home_Screens/home_new_house.dart';
@@ -10,6 +11,7 @@ import 'package:provider/provider.dart';
 import '../../models/resident.dart';
 import '../../services/auth.dart';
 import '../add_reservation.dart';
+import '../settings.dart';
 
 class Home_Appbar extends StatefulWidget {
   const Home_Appbar({Key? key}) : super(key: key);
@@ -27,18 +29,26 @@ class _Home_AppbarState extends State<Home_Appbar> {
   Widget build(BuildContext context) {
 
     String name = '';
-
+    household house = new household('', 'code');
 
     final residentsSnap = Provider.of<QuerySnapshot>(context);
     final user = Provider.of<User?>(context);
     final DatabaseService database = DatabaseService(user!.uid);
     final residents = database.residentListFromSnapshot(residentsSnap);
+    //final houses = Provider.of<List<household>>(context);
 
     residents.forEach((resident) {
       if (resident.ID == user.uid){
         curr_res = resident;
       }
     });
+
+
+   /* houses.forEach((h) {
+      if (h.name == curr_res.houseName){
+        house = h;
+      }
+    });*/
 
     name = curr_res.name;
 
@@ -71,9 +81,49 @@ class _Home_AppbarState extends State<Home_Appbar> {
         ]
       ),
       drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blueAccent,
+              ),
+              child: Text('Home Manager',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                )
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.addchart_outlined),
+              title: const Text('Calendar'),
+              onTap: () {
 
+
+
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.app_settings_alt_outlined),
+              title: const Text('Settings'),
+              onTap: () {
+
+                Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => Provider(
+                          create: (context) => house,
+                          builder: (context, child) =>settingsPage()
+                      )
+                    )
+                );
+              },
+            ),
+          ],
+        ),
       ),
-      body: HomeBody(),
+      body:
+      HomeBody(),
       floatingActionButton: (curr_res.inHouse) ? FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(

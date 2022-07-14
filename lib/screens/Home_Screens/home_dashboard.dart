@@ -65,7 +65,7 @@ class _home_dashState extends State<home_dash> {
           SizedBox(height: 30.0,),
 
           Center(
-            child: Text('House Mates',
+            child: Text('${curr_res.houseName} Residents',
               style: TextStyle(
                 fontSize: 25,
                 color: Colors.black,
@@ -76,7 +76,6 @@ class _home_dashState extends State<home_dash> {
           houseResidentsList(housemates)
         ]
       )
-
     );
   }
 
