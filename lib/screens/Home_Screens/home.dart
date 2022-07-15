@@ -5,6 +5,8 @@ import 'package:home_manager/screens/Home_Screens/home_appbar.dart';
 import 'package:home_manager/services/auth.dart';
 import 'package:home_manager/services/database.dart';
 import 'package:provider/provider.dart';
+import 'package:home_manager/models/household.dart';
+import '../../models/resident.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -16,21 +18,21 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   final AuthService auth = AuthService();
-  
+
 
   @override
   Widget build(BuildContext context) {
 
     final user = Provider.of<User?>(context);
-
+    final DatabaseService database = DatabaseService(user!.uid);
     
     return StreamProvider.value(
-      value: DatabaseService(user!.uid).residents,
+      value: database.residents,
       initialData: null,
-      child:StreamProvider.value(
-        value: DatabaseService(user.uid).houses,
+      child: StreamProvider.value(
+        value: database.houses,
         initialData: null,
-        child: Home_Appbar()
+        child: const Home_Appbar()
       )
     );
   }

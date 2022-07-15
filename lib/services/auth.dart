@@ -55,4 +55,17 @@ class AuthService {
     }
   }
 
+  /*Future deleteUser(String email, String password) async {
+    try {
+      UserCredential result = await auth.createUserWithEmailAndPassword(email: email, password: password);
+      User? user = result.user;
+      print(user);
+      await DatabaseService(user!.uid).deleteUser(); // called from database class
+      await result.user!.delete();
+      return true;
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }*/
 }

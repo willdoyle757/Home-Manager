@@ -4,8 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:home_manager/models/household.dart';
 import 'package:home_manager/models/reservation.dart';
 import 'package:home_manager/models/resident.dart';
-import 'package:home_manager/models/user.dart';
-
 
 
 class DatabaseService {
@@ -22,6 +20,15 @@ class DatabaseService {
 
   void initHouseName(String houseName){
     this.houseName = houseName;
+  }
+
+  Future deleteUser() async{
+    housesCollection.doc(houseName).collection('residents').doc(uid).delete();
+    return usersCollection.doc(uid).delete();
+  }
+
+  Future deleteHouse() async{
+    return housesCollection.doc(houseName).delete();
   }
 
   Future updateUserData (String name, bool inHouse, String houseName) async {
@@ -72,15 +79,12 @@ class DatabaseService {
 
   List<Reservation> reservationListFromSnapshot(QuerySnapshot snapshot){
 
-    print(snapshot.docs);
-
     return snapshot.docs.map((DocumentSnapshot doc) {
       return Reservation(
         doc['resource'],
         doc['start'].toDate(),
         doc['end'].toDate()
       );
-
     }).toList();
   }
 
@@ -90,7 +94,9 @@ class DatabaseService {
   }
 
   List<household> householdFromSnapshot(QuerySnapshot snapshot){
+    print('house request');
     return snapshot.docs.map((DocumentSnapshot doc) {
+      print(doc['name']);
       return household(
           doc['name'],
           doc['code']

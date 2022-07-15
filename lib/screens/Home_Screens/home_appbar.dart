@@ -29,13 +29,13 @@ class _Home_AppbarState extends State<Home_Appbar> {
   Widget build(BuildContext context) {
 
     String name = '';
-    household house = new household('', 'code');
+    household house = new household('', '');
 
     final residentsSnap = Provider.of<QuerySnapshot>(context);
     final user = Provider.of<User?>(context);
     final DatabaseService database = DatabaseService(user!.uid);
     final residents = database.residentListFromSnapshot(residentsSnap);
-    //final houses = Provider.of<List<household>>(context);
+    final houses = Provider.of<List<household>>(context);
 
     residents.forEach((resident) {
       if (resident.ID == user.uid){
@@ -44,11 +44,11 @@ class _Home_AppbarState extends State<Home_Appbar> {
     });
 
 
-   /* houses.forEach((h) {
+   houses.forEach((h) {
       if (h.name == curr_res.houseName){
         house = h;
       }
-    });*/
+    });
 
     name = curr_res.name;
 
@@ -100,22 +100,19 @@ class _Home_AppbarState extends State<Home_Appbar> {
               title: const Text('Calendar'),
               onTap: () {
 
-
-
               },
             ),
             ListTile(
               leading: const Icon(Icons.app_settings_alt_outlined),
               title: const Text('Settings'),
               onTap: () {
-
                 Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => Provider(
-                          create: (context) => house,
-                          builder: (context, child) =>settingsPage()
-                      )
+                  MaterialPageRoute(
+                    builder: (context) => Provider(
+                        create: (context) => house,
+                        builder: (context, child) =>settingsPage()
                     )
+                  )
                 );
               },
             ),

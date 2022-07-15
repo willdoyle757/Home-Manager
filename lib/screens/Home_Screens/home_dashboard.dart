@@ -42,7 +42,7 @@ class _home_dashState extends State<home_dash> {
 
     //print(reservations);
     if (reservations!.length == 0){
-      return noRes();
+      return noRes(curr_res, housemates);
     }
 
     return
@@ -79,7 +79,7 @@ class _home_dashState extends State<home_dash> {
     );
   }
 
-  Widget noRes(){
+  Widget noRes(Resident curr_res, List housemates){
     return Container(
       child:
       Column(
@@ -102,7 +102,19 @@ class _home_dashState extends State<home_dash> {
                 color: Colors.black,
               ),
             ),
-          )
+          ),
+          SizedBox(height: 30.0,),
+
+          Center(
+            child: Text('${curr_res.houseName} Residents',
+              style: TextStyle(
+                fontSize: 25,
+                color: Colors.black,
+              ),
+            ),
+          ),
+
+          houseResidentsList(housemates)
         ],
       )
     );
