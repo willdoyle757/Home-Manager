@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import '../../models/resident.dart';
 import '../../services/auth.dart';
 import '../add_reservation.dart';
+import '../calendar_view.dart';
 import '../settings.dart';
 
 class Home_Appbar extends StatefulWidget {
@@ -96,10 +97,14 @@ class _Home_AppbarState extends State<Home_Appbar> {
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.addchart_outlined),
+              leading: const Icon(Icons.calendar_month_outlined),
               title: const Text('Calendar'),
               onTap: () {
-
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                  builder: (context) => CalenderScreen()
+                  )
+                );
               },
             ),
             ListTile(
