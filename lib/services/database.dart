@@ -1,5 +1,6 @@
 import 'dart:core';
 
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:home_manager/models/household.dart';
 import 'package:home_manager/models/reservation.dart';
@@ -47,16 +48,17 @@ class DatabaseService {
     });
   }
 
-  Future updateHouseUserData(String houseName, String name) async{
+  Future updateHouseUserData(String houseName, String name, String color) async{
     return await housesCollection.doc(houseName).collection('residents').doc(uid).set({
       'name' : name,
       'inHouse' : true,
-      'houseName' : houseName
+      'houseName' : houseName,
+      'color' : color
     });
   }
 
   Future updateUserReservations(Reservation res, String houseName) async {
-    await housesCollection.doc(houseName).collection('residents').doc(uid).collection('reservations').doc(res.resource.hashCode.toString()).set(
+    await housesCollection.doc(houseName).collection('reservations').doc(res.resource.hashCode.toString()).set(
       res.toJson()
     );
   }
@@ -67,7 +69,8 @@ class DatabaseService {
         doc.get('name') ?? ' ',
         doc.id,
         doc.get('inHouse') ?? false,
-        doc.get('houseName')
+        doc.get('houseName'),
+        '#000000'
       );
     }).toList();
   }
@@ -83,14 +86,17 @@ class DatabaseService {
       return Reservation(
         doc['resource'],
         doc['start'].toDate(),
-        doc['end'].toDate()
+        doc['end'].toDate(),
+        doc['userid'],
+        doc['username'],
+        doc['color']
       );
     }).toList();
   }
 
 
   Stream<List<Reservation>> get reservation {
-    return housesCollection.doc(houseName).collection('residents').doc(uid).collection('reservations').snapshots().map(reservationListFromSnapshot);
+    return housesCollection.doc(houseName).collection('reservations').snapshots().map(reservationListFromSnapshot);
   }
 
   List<household> householdFromSnapshot(QuerySnapshot snapshot){
@@ -111,10 +117,11 @@ class DatabaseService {
   List<Resident> housematesFromSnapshot(QuerySnapshot snapshot){
     return snapshot.docs.map((DocumentSnapshot doc) {
       return Resident(
-          doc.get('name') ?? ' ',
-          doc.id,
-          doc.get('inHouse'),
-          doc.get('houseName')
+        doc.get('name') ?? ' ',
+        doc.id,
+        doc.get('inHouse'),
+        doc.get('houseName'),
+        doc.get('color')
       );
     }).toList();
   }

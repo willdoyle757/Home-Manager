@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 import '../../models/resident.dart';
 import '../../services/auth.dart';
 import '../add_reservation.dart';
-import '../calendar_view.dart';
+import '../Calendar_Screens/calendar_view.dart';
 import '../settings.dart';
 
 class Home_Appbar extends StatefulWidget {
@@ -24,7 +24,7 @@ class Home_Appbar extends StatefulWidget {
 class _Home_AppbarState extends State<Home_Appbar> {
 
   final AuthService auth = AuthService();
-  Resident curr_res = new Resident(" ", "ID", false, '');
+  Resident curr_res = new Resident(" ", "ID", false, '', '');
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +37,8 @@ class _Home_AppbarState extends State<Home_Appbar> {
     final DatabaseService database = DatabaseService(user!.uid);
     final residents = database.residentListFromSnapshot(residentsSnap);
     final houses = Provider.of<List<household>>(context);
+    final housemates = Provider.of<List<Resident>>(context);
+    final reservations = Provider.of<List<Reservation>?>(context);
 
     residents.forEach((resident) {
       if (resident.ID == user.uid){
@@ -55,14 +57,7 @@ class _Home_AppbarState extends State<Home_Appbar> {
 
     database.initHouseName(curr_res.houseName);
 
-    return
-      StreamProvider.value(
-        value: database.housemates,
-        initialData: null,
-        child: StreamProvider.value(
-          value: database.reservation,
-          initialData: null,
-          child: Scaffold(
+    return Scaffold(
       backgroundColor: Colors.grey.shade400,
       appBar: AppBar(
         backgroundColor: Colors.blueAccent,
@@ -102,7 +97,10 @@ class _Home_AppbarState extends State<Home_Appbar> {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                  builder: (context) => CalenderScreen()
+                    builder: (context) => Provider(
+                      create: (context) => reservations,
+                      builder: (context, child) => CalenderScreen()
+                    )
                   )
                 );
               },
@@ -114,8 +112,8 @@ class _Home_AppbarState extends State<Home_Appbar> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => Provider(
-                        create: (context) => house,
-                        builder: (context, child) =>settingsPage()
+                      create: (context) => house,
+                      builder: (context, child) => settingsPage()
                     )
                   )
                 );
@@ -140,8 +138,6 @@ class _Home_AppbarState extends State<Home_Appbar> {
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add),
       ) : null
-        )
-      )
     );
   }
 

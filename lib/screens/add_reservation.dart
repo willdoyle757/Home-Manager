@@ -32,7 +32,7 @@ class _addReservationState extends State<addReservation> {
   @override
   Widget build(BuildContext context) {
 
-    Resident curr_res = new Resident('', '', false, '');
+    Resident curr_res = new Resident('', '', false, '', '');
 
     final residents = Provider.of<List<Resident>>(context);
     final user = Provider.of<User?>(context);
@@ -103,7 +103,8 @@ class _addReservationState extends State<addReservation> {
               //add button
               ElevatedButton(
                 onPressed: () async{
-                  Reservation newReservation = new Reservation(resource, start, end);
+                  print("current user color: ${curr_res.color}");
+                  Reservation newReservation = new Reservation(resource, start, end, user.uid, curr_res.name, curr_res.color);
                   //res_list.add(newReservation.toJson());
                   print(curr_res.name);
                   print(resource);

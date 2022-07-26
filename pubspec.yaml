@@ -40,6 +40,7 @@ dependencies:
   firebase_database: ^9.0.15
   provider: ^6.0.3
   syncfusion_flutter_calendar: ^20.2.39
+  flutter_colorpicker: ^1.0.3
 
 dev_dependencies:
   flutter_test:

@@ -17,7 +17,7 @@ class home_new_house extends StatefulWidget {
 
 class _home_new_houseState extends State<home_new_house> {
 
-  Resident curr_res = new Resident(" ", "ID", false, '');
+  Resident curr_res = new Resident(" ", "ID", false, '', '');
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +137,7 @@ class _createHouseState extends State<createHouse> {
                   onPressed: () async {
                     database.updateUserData(name , true, houseName);
                     database.updateHouseData(houseName, '1111');
-                    database.updateHouseUserData(houseName, name);
+                    database.updateHouseUserData(houseName, name, '#000000');
                     Navigator.pop(context);
                   },
                   child: Text('Create')
@@ -217,7 +217,7 @@ class _joinHouseState extends State<joinHouse> {
                         if (tempHouse.code == code){
                           house = tempHouse;
                           database.updateUserData(name , true, house.name);
-                          database.updateHouseUserData(house.name, name);
+                          database.updateHouseUserData(house.name, name, '#000000');
                         }
 
                         Navigator.pop(context);

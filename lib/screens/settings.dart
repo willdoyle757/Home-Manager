@@ -20,7 +20,7 @@ class _settingsPageState extends State<settingsPage> {
   @override
   Widget build(BuildContext context) {
 
-    Resident curr_res = new Resident('', '', false, '');
+    Resident curr_res = new Resident('', '', false, '', '');
 
 
     final user = Provider.of<User?>(context);
