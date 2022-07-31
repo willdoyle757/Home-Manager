@@ -32,12 +32,12 @@ class _Home_AppbarState extends State<Home_Appbar> {
     String name = '';
     household house = new household('', '');
 
-    final residentsSnap = Provider.of<QuerySnapshot>(context);
+    final residentsSnap = Provider.of<QuerySnapshot?>(context);
     final user = Provider.of<User?>(context);
     final DatabaseService database = DatabaseService(user!.uid);
-    final residents = database.residentListFromSnapshot(residentsSnap);
-    final houses = Provider.of<List<household>>(context);
-    final housemates = Provider.of<List<Resident>>(context);
+    final residents = database.residentListFromSnapshot(residentsSnap!);
+    final houses = Provider.of<List<household>?>(context);
+    final housemates = Provider.of<List<Resident>?>(context);
     final reservations = Provider.of<List<Reservation>?>(context);
 
     residents.forEach((resident) {
@@ -47,7 +47,7 @@ class _Home_AppbarState extends State<Home_Appbar> {
     });
 
 
-   houses.forEach((h) {
+   houses!.forEach((h) {
       if (h.name == curr_res.houseName){
         house = h;
       }
@@ -76,7 +76,7 @@ class _Home_AppbarState extends State<Home_Appbar> {
           )
         ]
       ),
-      drawer: Drawer(
+      drawer: curr_res.inHouse ? Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
@@ -121,7 +121,7 @@ class _Home_AppbarState extends State<Home_Appbar> {
             ),
           ],
         ),
-      ),
+      ) : Drawer(),
       body:
       HomeBody(),
       floatingActionButton: (curr_res.inHouse) ? FloatingActionButton(

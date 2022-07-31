@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:home_manager/screens/loading.dart';
 import 'package:home_manager/services/database.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -18,17 +19,18 @@ class home_dash extends StatefulWidget {
 
 class _home_dashState extends State<home_dash> {
   Color color = Colors.black45;
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
 
     Resident curr_res = new Resident('', '', false, '', '');
 
-    final residentsSnap = Provider.of<QuerySnapshot>(context);
+    final residentsSnap = Provider.of<QuerySnapshot?>(context);
     final user = Provider.of<User?>(context);
     final DatabaseService database = DatabaseService(user!.uid);
-    final residents = database.residentListFromSnapshot(residentsSnap);
-    final housemates = Provider.of<List<Resident>>(context);
+    final residents = database.residentListFromSnapshot(residentsSnap!);
+    final housemates = Provider.of<List<Resident>?>(context);
     final reservations = Provider.of<List<Reservation>?>(context);
 
     residents.forEach((res) {
@@ -39,13 +41,19 @@ class _home_dashState extends State<home_dash> {
 
     database.initHouseName(curr_res.houseName);
 
+    if (user == null || housemates == null || reservations == null){
+      loading = true;
+    }
+    else {
+      loading = false;
+    }
     //print(reservations);
     if (reservations!.length == 0){
-      return noRes(curr_res, housemates);
+      return noRes(curr_res, housemates!);
     }
 
     return
-      Container(
+      loading ? LoadingScreen() : Container(
       child: Column(
         children: <Widget>[
           SizedBox(height: 30.0,),
@@ -72,7 +80,7 @@ class _home_dashState extends State<home_dash> {
             ),
           ),
 
-          houseResidentsList(housemates)
+          houseResidentsList(housemates!)
         ]
       )
     );

@@ -24,11 +24,11 @@ class _home_new_houseState extends State<home_new_house> {
 
     String name = '';
 
-    final residentsSnap = Provider.of<QuerySnapshot>(context);
+    final residentsSnap = Provider.of<QuerySnapshot?>(context);
     final user = Provider.of<User?>(context);
     final DatabaseService database = DatabaseService(user!.uid);
-    final residents = database.residentListFromSnapshot(residentsSnap);
-    final houses = Provider.of<List<household>>(context);
+    final residents = database.residentListFromSnapshot(residentsSnap!);
+    final houses = Provider.of<List<household>?>(context);
 
     residents.forEach((resident) {
       if (resident.ID == user.uid){
@@ -101,6 +101,7 @@ class createHouse extends StatefulWidget {
 class _createHouseState extends State<createHouse> {
 
   String houseName = '';
+  final _formkey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -120,6 +121,7 @@ class _createHouseState extends State<createHouse> {
         padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
         child:
         Form(
+          key: _formkey,
           child: Column(
             mainAxisSize : MainAxisSize.min,
             children: <Widget>[
@@ -127,6 +129,7 @@ class _createHouseState extends State<createHouse> {
               //resource
               TextFormField(
                 decoration: InputDecoration(hintText: 'House Name'),
+                validator: (val) => val!.isEmpty && val == 'default' ? 'House must have a name' : null,
                 onChanged: (val) {
                   houseName = val;
                 },
@@ -135,10 +138,12 @@ class _createHouseState extends State<createHouse> {
               //end
               ElevatedButton(
                   onPressed: () async {
-                    database.updateUserData(name , true, houseName);
-                    database.updateHouseData(houseName, '1111');
-                    database.updateHouseUserData(houseName, name, '#000000');
-                    Navigator.pop(context);
+                    if (_formkey.currentState!.validate()) {
+                      database.updateUserData(name, true, houseName);
+                      database.updateHouseData(houseName, '1111');
+                      database.updateHouseUserData(houseName, name, '#000000');
+                      Navigator.pop(context);
+                    }
                   },
                   child: Text('Create')
               ),
@@ -160,6 +165,8 @@ class joinHouse extends StatefulWidget {
 }
 
 class _joinHouseState extends State<joinHouse> {
+
+  final _formkey = GlobalKey<FormState>();
 
   String houseName = '';
   String code = '';
@@ -184,6 +191,7 @@ class _joinHouseState extends State<joinHouse> {
             padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
             child:
             Form(
+              key: _formkey,
               child: Column(
                 mainAxisSize : MainAxisSize.min,
                 children: <Widget>[
@@ -191,6 +199,7 @@ class _joinHouseState extends State<joinHouse> {
                   //resource
                   TextFormField(
                     decoration: InputDecoration(hintText: 'House'),
+                    validator: (val) => val!.isEmpty ? 'House must have a name' : null,
                     onChanged: (val) {
                       houseName = val;
 
@@ -206,6 +215,7 @@ class _joinHouseState extends State<joinHouse> {
                   //resource
                   TextFormField(
                     decoration: InputDecoration(hintText: 'Code'),
+                    validator: (val) => val?.length != 4 ? 'Code must be 4 digits long' : null,
                     onChanged: (val) {
                       code = val;
                     },
@@ -214,13 +224,16 @@ class _joinHouseState extends State<joinHouse> {
                   //end
                   ElevatedButton(
                       onPressed: () async {
-                        if (tempHouse.code == code){
-                          house = tempHouse;
-                          database.updateUserData(name , true, house.name);
-                          database.updateHouseUserData(house.name, name, '#000000');
-                        }
+                        if (_formkey.currentState!.validate()) {
+                          if (tempHouse.code == code) {
+                            house = tempHouse;
+                            database.updateUserData(name, true, house.name);
+                            database.updateHouseUserData(
+                                house.name, name, '#000000');
+                          }
 
-                        Navigator.pop(context);
+                          Navigator.pop(context);
+                        }
                       },
                       child: Text('Join')
                   ),

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:home_manager/screens/Home_Screens/home_appbar.dart';
+import 'package:home_manager/screens/loading.dart';
 import 'package:home_manager/services/auth.dart';
 import 'package:home_manager/services/database.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +20,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   final AuthService auth = AuthService();
-
 
   @override
   Widget build(BuildContext context) {
@@ -47,17 +47,19 @@ class home_Wrapper extends StatefulWidget {
 }
 
 class _home_WrapperState extends State<home_Wrapper> {
+
+
   @override
   Widget build(BuildContext context) {
 
     //household house = new household('', '');
     Resident curr_res = new Resident(" ", "ID", false, '', '');
 
-    final residentsSnap = Provider.of<QuerySnapshot>(context);
+    final residentsSnap = Provider.of<QuerySnapshot?>(context);
     final user = Provider.of<User?>(context);
     final DatabaseService database = DatabaseService(user!.uid);
-    final residents = database.residentListFromSnapshot(residentsSnap);
-    final houses = Provider.of<List<household>>(context);
+    final residents = database.residentListFromSnapshot(residentsSnap!);
+    //final houses = Provider.of<List<household>>(context);
 
     residents.forEach((res) {
       if (res.ID == user.uid){
@@ -74,7 +76,7 @@ class _home_WrapperState extends State<home_Wrapper> {
       child: StreamProvider.value(
         value: database.reservation,
         initialData: null,
-        child:Home_Appbar()
+        child: Home_Appbar()
       )
     );
   }

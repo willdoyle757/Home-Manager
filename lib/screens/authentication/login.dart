@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:home_manager/models/user.dart';
+import 'package:home_manager/screens/loading.dart';
 
 import '../../services/auth.dart';
 
@@ -18,6 +19,8 @@ class _LoginPageState extends State<LoginPage>{
   final AuthService auth = AuthService();
   final _formkey = GlobalKey<FormState>();
 
+  bool loading = false;
+
   late String userName;
   String email = '';
   String password = '';
@@ -25,7 +28,7 @@ class _LoginPageState extends State<LoginPage>{
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return loading ? LoadingScreen() : Scaffold(
       backgroundColor: Colors.grey.shade400,
       appBar: AppBar(
         backgroundColor: Colors.blueAccent,
@@ -76,11 +79,20 @@ class _LoginPageState extends State<LoginPage>{
           ElevatedButton(
               onPressed: () async{
                 if (_formkey.currentState!.validate()){
+                  //setState(() => loading = true);
                   print(email);
                   print(password);
                   dynamic result = await auth.loginWithEmail(email, password);
                   if(result == null){
-                    error = 'Wrong email or password';
+                    setState(() {
+                      error = 'Wrong email or password';
+                      //loading = false;
+                    });
+                  }
+                  else{
+                    setState(() {
+                      //loading = false;
+                    });
                   }
                 }
               },
