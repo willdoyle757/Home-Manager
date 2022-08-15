@@ -129,7 +129,7 @@ class _Home_AppbarState extends State<Home_Appbar> {
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => Provider(
-                create: (context) => residents,
+                create: (context) => housemates,
                 builder: (context, child) => addReservation()
               )
             )

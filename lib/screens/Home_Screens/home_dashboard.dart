@@ -24,7 +24,8 @@ class _home_dashState extends State<home_dash> {
   @override
   Widget build(BuildContext context) {
 
-    Resident curr_res = new Resident('', '', false, '', '');
+    Resident curr_user = new Resident('', '', false, '', '');
+    Resident curr_mate = new Resident('', '', false, '', '');
 
     final residentsSnap = Provider.of<QuerySnapshot?>(context);
     final user = Provider.of<User?>(context);
@@ -35,11 +36,17 @@ class _home_dashState extends State<home_dash> {
 
     residents.forEach((res) {
       if (res.ID == user.uid){
-        curr_res = res;
+        curr_user = res;
       }
     });
 
-    database.initHouseName(curr_res.houseName);
+    housemates!.forEach((mate) {
+      if (mate.ID == user.uid){
+        curr_mate = mate;
+      }
+    });
+
+    database.initHouseName(curr_user.houseName);
 
     if (user == null || housemates == null || reservations == null){
       loading = true;
@@ -49,7 +56,7 @@ class _home_dashState extends State<home_dash> {
     }
     //print(reservations);
     if (reservations!.length == 0){
-      return noRes(curr_res, housemates!);
+      return noRes(curr_user, housemates, database, curr_mate);
     }
 
     return
@@ -67,12 +74,12 @@ class _home_dashState extends State<home_dash> {
             ),
           ),
           //reservation list
-          reservationList(reservations, curr_res.name, residents),
+          reservationList(reservations, curr_user.name, residents),
 
           SizedBox(height: 30.0,),
 
           Center(
-            child: Text('${curr_res.houseName} Residents',
+            child: Text('${curr_user.houseName} Residents',
               style: TextStyle(
                 fontSize: 25,
                 color: Colors.black,
@@ -80,13 +87,13 @@ class _home_dashState extends State<home_dash> {
             ),
           ),
 
-          houseResidentsList(housemates!)
+          houseResidentsList(housemates, database, curr_mate)
         ]
       )
     );
   }
 
-  Widget noRes(Resident curr_res, List housemates){
+  Widget noRes(Resident curr_res, List housemates, DatabaseService database, Resident curr_mate){
     return Container(
       child:
       Column(
@@ -121,7 +128,7 @@ class _home_dashState extends State<home_dash> {
             ),
           ),
 
-          houseResidentsList(housemates)
+          houseResidentsList(housemates, database, curr_mate)
         ],
       )
     );
@@ -162,20 +169,23 @@ class _home_dashState extends State<home_dash> {
     return new Color(int.parse(code.substring(1, 7), radix: 16) + 0xFF000000);
   }
 
-  /*Widget buildColorPicker() => ColorPicker(
+  Widget buildColorPicker() => ColorPicker(
     pickerColor: color,
-  )*/
+    onColorChanged: (color) => setState (() => this.color = color),
+  );
 
-  void pickColor(BuildContext context) => showDialog(
+  void pickColor(BuildContext context, DatabaseService database, curr_mate) => showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Pick profile color'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-
+            buildColorPicker(),
             TextButton(
-              onPressed: () {Navigator.of(context).pop();},
+              onPressed: () {Navigator.of(context).pop();
+                database.updateHouseUserData(curr_mate.houseName, curr_mate.name, '#${color.value.toRadixString(16).substring(2, 8)}');
+                },
               child: Text(
                 'SELECT',
                 style: TextStyle(fontSize: 20),
@@ -185,8 +195,8 @@ class _home_dashState extends State<home_dash> {
         ),
       )
   );
-  
-  Widget houseResidentsList(List houseResidents){
+  //hexToColor(houseResidents[index].color)
+  Widget houseResidentsList(List houseResidents, DatabaseService database, curr_mate){
     return ListView.builder(scrollDirection: Axis.vertical,
       shrinkWrap: true,
       itemCount: houseResidents.length,
@@ -195,7 +205,9 @@ class _home_dashState extends State<home_dash> {
         return Card (child: ListTile(
           leading: ElevatedButton(
             onPressed: () {
-              pickColor(context);
+              if(curr_mate.ID == houseResidents[index].ID){
+                pickColor(context, database, curr_mate);
+              }
             },
             child: Icon(Icons.account_box_outlined, color: Colors.white),
             style: ElevatedButton.styleFrom(

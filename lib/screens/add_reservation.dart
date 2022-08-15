@@ -38,13 +38,12 @@ class _addReservationState extends State<addReservation> {
     final user = Provider.of<User?>(context);
     final DatabaseService database = DatabaseService(user!.uid);
 
-
+    //
     residents.forEach((res) {
       if (res.ID == user.uid){
         curr_res = res;
       }
     });
-
     database.initHouseName(curr_res.houseName);
 
 
@@ -103,14 +102,8 @@ class _addReservationState extends State<addReservation> {
               //add button
               ElevatedButton(
                 onPressed: () async{
-                  print("current user color: ${curr_res.color}");
+                  //print("current user color: ${curr_res.color}");
                   Reservation newReservation = new Reservation(resource, start, end, user.uid, curr_res.name, curr_res.color);
-                  //res_list.add(newReservation.toJson());
-                  print(curr_res.name);
-                  print(resource);
-                  print(start);
-                  print(end);
-                  print(curr_res.houseName);
                   await database.updateUserReservations(newReservation, curr_res.houseName);
                   Navigator.pop(context);
                 },
