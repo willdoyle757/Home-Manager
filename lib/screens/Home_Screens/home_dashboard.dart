@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:home_manager/screens/loading.dart';
 import 'package:home_manager/services/database.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import '../../models/reservation.dart';
@@ -156,7 +157,7 @@ class _home_dashState extends State<home_dash> {
       itemBuilder: (BuildContext context, index) {
         return Card (child: ListTile(
           leading: Text( '${reservations[index].resource}'),
-          title: Text(' ${reservations[index].start}'),
+          title: Text(' ${DateFormat.yMMMMEEEEd().add_jm().format(reservations[index].start)} - ${DateFormat.jm().format(reservations[index].end)}'),
           trailing: Text('${residentSearch(residents, reservations[index].userid).name}'),
         )
         );

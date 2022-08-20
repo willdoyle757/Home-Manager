@@ -1,11 +1,11 @@
 
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../models/reservation.dart';
-import '../../models/resident.dart';
+import 'event_viewing_page.dart';
 
 
 class CalenderScreen extends StatelessWidget {
@@ -43,12 +43,19 @@ class CalenderScreen extends StatelessWidget {
         ],
         dataSource: MeetingDataSource(getAppointments(reservations)),
         controller: _controller,
-        onTap: calendarTapped,
+        onTap: (details) {
+          if (details.appointments == null) return;
+          final event = details.appointments!.first;
+
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => Provider(
+                create: (context) => reservations,
+                builder: (context, child) => EventViewingPage(event: event))));
+        },
         monthViewSettings: MonthViewSettings(
             navigationDirection: MonthNavigationDirection.vertical),
       ),
     );
-
   }
 
   void calendarTapped(CalendarTapDetails calendarTapDetails) {
@@ -74,7 +81,7 @@ List<Appointment> getAppointments(List<Reservation> reservations){
       Appointment(
         startTime: res.start,
         endTime: res.end,
-        subject: '${res.resource} by ${res.username}',
+        subject: '${res.resource} reserved by ${res.username}',
         color: hexToColor(res.color)
       )
     );
